@@ -1,4 +1,4 @@
-package com.example.drawhub
+package com.example.KidsDrawhub
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

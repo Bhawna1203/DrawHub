@@ -1,4 +1,4 @@
-package com.example.drawhub
+package com.example.KidsDrawhub
 
 import org.junit.Test
 
