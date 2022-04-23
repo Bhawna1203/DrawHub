@@ -32,8 +32,9 @@ class MainActivity : AppCompatActivity() {
 
     private var drawingView: DrawingView?= null
     private var mImageButtonCurrentPaint: ImageButton? = null
+    var customProgressDialog : Dialog? = null
 
-    //Todo 2: create an activity result launcher to open an intent
+    //Todo : create an activity result launcher to open an intent
     val openGalleryLauncher:ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result->
         //Todo 3: get the returned result from the lambda and check the resultcode and the data returned
         if (result.resultCode == RESULT_OK && result.data != null){
@@ -116,6 +117,7 @@ class MainActivity : AppCompatActivity() {
         ibSave.setOnClickListener{
             //check if permission is allowed
             if (isReadStorageAllowed()){
+                showProgressDialog()
                 //launch a coroutine block
                 lifecycleScope.launch{
                     //reference the frame layout
@@ -282,6 +284,7 @@ class MainActivity : AppCompatActivity() {
                     result = f.absolutePath // The file absolute path is return as a result.
                     //We switch from io to ui thread to show a toast
                     runOnUiThread {
+                        cancelProgressDialog()
                         if (!result.isEmpty()) {
                             Toast.makeText(
                                 this@MainActivity,
@@ -303,6 +306,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return result
+    }
+
+    /** Todo 2:create function to show the dialog
+     * Method is used to show the Custom Progress Dialog.
+     */
+    private fun showProgressDialog() {
+        customProgressDialog = Dialog(this@MainActivity)
+
+        /*Set the screen content from a layout resource.
+        The resource will be inflated, adding all top-level views to the screen.*/
+        customProgressDialog?.setContentView(R.layout.dialog_custom_progress)
+
+        //Start the dialog and display it on screen.
+        customProgressDialog?.show()
+    }
+
+    /** Todo : create function to cancel dialog
+     * This function is used to dismiss the progress dialog if it is visible to user.
+     */
+    private fun cancelProgressDialog() {
+        if (customProgressDialog != null) {
+            customProgressDialog?.dismiss()
+            customProgressDialog = null
+        }
     }
 
 

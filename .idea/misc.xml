@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_splash_screen.xml" value="0.18" />
         <entry key="app/src/main/res/layout/dialog_brush_size.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/dialog_custom_progress.xml" value="0.14581231079717458" />
       </map>
     </option>
   </component>
