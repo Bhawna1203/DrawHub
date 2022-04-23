@@ -109,6 +109,23 @@ class MainActivity : AppCompatActivity() {
               requestStoragePermission()
         }
 
+        //reference the save button from the layout
+        val ibSave:ImageButton = findViewById(R.id.ib_save)
+        //set onclick listener
+        // TODO  : Adding an click event to save or exporting the image to your phone storage.)
+        ibSave.setOnClickListener{
+            //check if permission is allowed
+            if (isReadStorageAllowed()){
+                //launch a coroutine block
+                lifecycleScope.launch{
+                    //reference the frame layout
+                    val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_view_container)
+                    //Save the image to the device
+                    saveBitmapFile(getBitmapFromView(flDrawingView))
+                }
+            }
+        }
+
     }
     /**
      * Method is used to launch the dialog to select different brush sizes.
@@ -160,7 +177,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Todo 5: create a method to requestStorage permission
+    /**
+     * We are calling this method to check the permission status
+     */
+    private fun isReadStorageAllowed(): Boolean {
+
+        val result = ContextCompat.checkSelfPermission(
+            this, Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    //Todo : create a method to requestStorage permission
     private fun requestStoragePermission(){
         //Todo 6: Check if the permission was denied and show rationale
         if (
@@ -201,6 +230,79 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         builder.create().show()
+    }
+
+    /**
+     * Create bitmap from view and returns it
+     */
+    private fun getBitmapFromView(view: View): Bitmap {
+
+        //Define a bitmap with the same size as the view.
+        // CreateBitmap : Returns a mutable bitmap with the specified width and height
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        //Bind a canvas to it
+        val canvas = Canvas(returnedBitmap)
+        //Get the view's background
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(canvas)
+        } else {
+            //does not have background drawable, then draw white background on the canvas
+            canvas.drawColor(Color.WHITE)
+        }
+        // draw the view on the canvas
+        view.draw(canvas)
+        //return the bitmap
+        return returnedBitmap
+    }
+
+    // TODO : A method to save the image.)
+    private suspend fun saveBitmapFile(mBitmap: Bitmap?):String{
+        var result = ""
+        withContext(Dispatchers.IO) {
+            if (mBitmap != null) {
+
+                try {
+                    val bytes = ByteArrayOutputStream() // Creates a new byte array output stream.
+                    // The buffer capacity is initially 32 bytes, though its size increases if necessary.
+
+                    mBitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes)
+
+
+                    val f = File(
+                        externalCacheDir?.absoluteFile.toString()
+                                + File.separator + "KidDrawingApp_" + System.currentTimeMillis() / 1000 + ".jpg"
+                    )
+
+                    val fo =
+                        FileOutputStream(f) // Creates a file output stream to write to the file represented by the specified object.
+                    fo.write(bytes.toByteArray()) // Writes bytes from the specified byte array to this file output stream.
+                    fo.close() // Closes this file output stream and releases any system resources associated with this stream. This file output stream may no longer be used for writing bytes.
+                    result = f.absolutePath // The file absolute path is return as a result.
+                    //We switch from io to ui thread to show a toast
+                    runOnUiThread {
+                        if (!result.isEmpty()) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "File saved successfully :$result",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Something went wrong while saving the file.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+        }
+        return result
     }
 
 
