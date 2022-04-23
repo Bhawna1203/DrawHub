@@ -32,6 +32,17 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <!--SOURCE : https://developer.android.com/guide/topics/manifest/provider-element-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="eu.kidsdrawingapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path" />
+        </provider>
     </application>
 
 </manifest>
