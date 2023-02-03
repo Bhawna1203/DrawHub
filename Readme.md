@@ -1,4 +1,4 @@
-<h1 align="center">KidsDrawHub App</h1>
+<h1 align="center">KidsDrawHub App with Kotlin</h1>
 
 <p align="center">  
  Modern Android Application with MVVM architecture.
